@@ -18,20 +18,20 @@ class MainBtrfsQt6(QMainWindow):
         # Create a layout to hold the buttons
         layout = QVBoxLayout()
 
-        # List of executables and their labels
+        # List of Python scripts and their labels
         executables = [
-            ("Device Manager", "devicemanager_btrfsqt6"),
-            ("Disk Balance", "diskbalance_btrfsqt6"),
-            ("Disk Quota", "diskquota_btrfsqt6"),
-            ("Disk Recovery", "diskrecovery_btrfsqt6"),
-            ("Disk Scrub", "diskscrub_btrfsqt6"),
-            ("Filesystem Property", "filesystem_btrfsqt6"),
-            ("Rescue", "rescue_btrfsqt6"),
-            ("Subvolume", "subvolume_btrfsqt6")
+            ("Device Manager", "devicemanager_btrfsqt6.py"),
+            ("Disk Balance", "diskbalance_btrfsqt6.py"),
+            ("Disk Quota", "diskquota_btrfsqt6.py"),
+            ("Disk Recovery", "diskrecovery_btrfsqt6.py"),
+            ("Disk Scrub", "diskscrub_btrfsqt6.py"),
+            ("Filesystem Property", "filesystem_btrfsqt6.py"),
+            ("Rescue", "rescue_btrfsqt6.py"),
+            ("Subvolume", "subvolume_btrfsqt6.py")
         ]
 
-        for label, executable_name in executables:
-            button = self.create_popup_button(label, executable_name)
+        for label, script_name in executables:
+            button = self.create_popup_button(label, script_name)
             layout.addWidget(button)
 
         # Create a central widget and set the layout
@@ -88,29 +88,24 @@ class MainBtrfsQt6(QMainWindow):
             }
         """)
 
-    def create_popup_button(self, label, executable_name):
-        """Create a styled button that acts like a popup."""
+    def create_popup_button(self, label, script_name):
+        """Create a styled button that runs a Python script."""
         button = QPushButton(label, self)
-        button.clicked.connect(lambda: self.run_executable(executable_name))
-        
-        # Set the cursor to a pointing hand when hovering over the button
+        button.clicked.connect(lambda: self.run_script(script_name))
         button.setCursor(Qt.CursorShape.PointingHandCursor)
-        
         return button
 
-    def run_executable(self, executable_name):
-        """Run the executable when menu item is clicked."""
+    def run_script(self, script_name):
+        """Run the Python script when menu item is clicked."""
         try:
-            # Assuming the executables are in the current working directory or a predefined directory
-            executable_path = f"./{executable_name}"  # You can set an absolute path if needed
+            script_path = os.path.join(os.getcwd(), script_name)
 
-            # Check if the file exists and is executable
-            if os.path.exists(executable_path) and os.access(executable_path, os.X_OK):
-                subprocess.run([executable_path], check=True)
+            if os.path.exists(script_path) and os.access(script_path, os.R_OK):
+                subprocess.run([sys.executable, script_path], check=True)
             else:
-                print(f"Executable '{executable_name}' not found or not executable.")
+                print(f"Script '{script_name}' not found or not readable.")
         except Exception as e:
-            print(f"Error running executable: {e}")
+            print(f"Error running script: {e}")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
